@@ -36,7 +36,8 @@ export default class Autocomplete {
   createResultsEl(results) {
     const fragment = document.createDocumentFragment();
     results.forEach((result) => {
-      const el = document.createElement('li');
+      const el = document.createElement('option');
+
       Object.assign(el, {
         className: 'result',
         textContent: result.text,
@@ -45,7 +46,9 @@ export default class Autocomplete {
       // Pass the value to the onSelect callback
       el.addEventListener('click', (event) => {
         const { onSelect } = this.options;
-        if (typeof onSelect === 'function') onSelect(result.value);
+        if (typeof onSelect === 'function') {
+          onSelect(result.value);
+        }
       });
 
       fragment.appendChild(el);
@@ -55,14 +58,18 @@ export default class Autocomplete {
 
   createQueryInputEl() {
     const inputEl = document.createElement('input');
+
     Object.assign(inputEl, {
-      type: 'search',
       name: 'query',
       autocomplete: 'off',
+      value: '',
     });
 
-    inputEl.addEventListener('input', event =>
-      this.onQueryChange(event.target.value));
+    inputEl.setAttribute('list', 'users');
+
+    inputEl.addEventListener('input', (event) =>
+      this.onQueryChange(event.target.value)
+    );
 
     return inputEl;
   }
@@ -70,11 +77,12 @@ export default class Autocomplete {
   init() {
     // Build query input
     this.inputEl = this.createQueryInputEl();
-    this.rootEl.appendChild(this.inputEl)
+    this.rootEl.appendChild(this.inputEl);
 
     // Build results dropdown
-    this.listEl = document.createElement('ul');
-    Object.assign(this.listEl, { className: 'results' });
+    this.listEl = document.createElement('datalist');
+    Object.assign(this.listEl, { className: 'results', id: 'users' });
+
     this.rootEl.appendChild(this.listEl);
   }
 }
